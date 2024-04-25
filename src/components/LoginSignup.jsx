@@ -10,8 +10,10 @@ import {
 import { Bounce, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
+import { useChatState } from "./context/ChatProvider";
 
 const LoginSignup = () => {
+  const { user, setUser } = useChatState();
   const [isLogin, setIsLogin] = useState(true);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -104,6 +106,9 @@ const LoginSignup = () => {
           theme: "dark",
           transition: Bounce,
         });
+        if (!user) {
+          setUser(response);
+        }
         localStorage.setItem("user", JSON.stringify(response));
         navigate("/chats");
       } else {

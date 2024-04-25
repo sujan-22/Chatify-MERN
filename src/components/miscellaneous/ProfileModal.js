@@ -21,8 +21,10 @@ const style = {
   transform: "translate(-50%, -50%)",
   width: 400,
   bgcolor: "rgb(255,255,255,0.8)",
+  boxShadow: 24,
   borderRadius: 2,
   p: 4,
+  padding: "10px 0",
   gap: 2,
 };
 
@@ -41,7 +43,7 @@ export default function ProfileModal({ user, visible, onClose }) {
             {user.data.name}
           </Typography>
           <Image
-            style={{ zIndex: 1400, borderRadius: 10 }}
+            style={{ zIndex: 1400, borderRadius: 10, maxWidth: "90%" }}
             width={200}
             src={user.data.profilePic}
             preview={{
