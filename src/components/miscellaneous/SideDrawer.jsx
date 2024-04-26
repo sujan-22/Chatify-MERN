@@ -115,16 +115,24 @@ const SideDrawer = () => {
     }
   };
 
-  const menu = (
-    <Menu>
-      <Menu.Item key="1" onClick={() => setProfileModalVisible(true)}>
-        <UserOutlined /> My Profile
-      </Menu.Item>
-      <Menu.Item key="2" onClick={logoutUser}>
-        <LogoutOutlined /> Logout
-      </Menu.Item>
-    </Menu>
-  );
+  const items = [
+    {
+      key: "1",
+      label: (
+        <Menu.Item key="1" onClick={() => setProfileModalVisible(true)}>
+          <UserOutlined /> My Profile
+        </Menu.Item>
+      ),
+    },
+    {
+      key: "2",
+      label: (
+        <Menu.Item key="2" onClick={logoutUser}>
+          <LogoutOutlined /> Logout
+        </Menu.Item>
+      ),
+    },
+  ];
 
   return (
     <>
@@ -147,14 +155,12 @@ const SideDrawer = () => {
           <Col>
             <div style={{ display: "flex", alignItems: "center" }}>
               <BellOutlined style={{ marginRight: 10, fontSize: 20 }} />
-              <Dropdown menu={menu} trigger={["click"]}>
-                <div>
-                  <Avatar
-                    size="large"
-                    style={{ cursor: "pointer" }}
-                    src={user.data.profilePic}
-                  />
-                </div>
+              <Dropdown menu={{ items }} placement="bottom" arrow>
+                <Avatar
+                  size="large"
+                  style={{ cursor: "pointer" }}
+                  src={user.data.profilePic}
+                />
               </Dropdown>
             </div>
           </Col>

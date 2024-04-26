@@ -15,7 +15,7 @@ const ChatPage = () => {
   const colorBgContainer = "rgba(255,255,255,0.4)";
   return (
     <Layout style={{ background: "transparent" }}>
-      <SideDrawer />
+      {user && <SideDrawer />}
       <Content style={{ margin: "16px 16px 16px", display: "flex" }}>
         <div
           style={{

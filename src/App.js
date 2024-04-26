@@ -5,6 +5,7 @@ import * as random from "maath/random/dist/maath-random.esm";
 import { Route, Routes } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import ChatPage from "./pages/ChatPage";
+import { ToastContainer } from "react-toastify";
 
 export default function App() {
   return (
@@ -16,6 +17,7 @@ export default function App() {
         <Stars />
       </Canvas>
       <div style={{ position: "relative", zIndex: 1 }}>
+        <ToastContainer />
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/chats" element={<ChatPage />} />

@@ -10,12 +10,13 @@ const UserListItem = ({ user, handleFunction, loading }) => {
         alignItems: "center",
         marginBottom: "5px",
         borderRadius: "8px",
+        height: 60,
       }}
     >
       {loading ? (
         <Skeleton.Avatar active size="medium" shape="circle" />
       ) : (
-        <div style={{ display: "flex" }}>
+        <div style={{ display: "flex", alignItems: "center" }}>
           <Avatar size="medium" src={user.profilePic} />
           <div style={{ marginLeft: "10px" }}>
             <p style={{ margin: 0, fontWeight: "bold" }}>{user.name}</p>{" "}
