@@ -61,7 +61,7 @@ const SideDrawer = () => {
       setLoading(true);
       const config = {
         headers: {
-          Authorization: `Bearer ${user.data.token}`,
+          Authorization: `Bearer ${user.token}`,
         },
       };
       const { data } = await axios.get(
@@ -84,13 +84,12 @@ const SideDrawer = () => {
   };
 
   const accessChat = async (userId) => {
-    console.log(userId);
     try {
       setLoadingchat(true);
       const config = {
         headers: {
           "Content-type": "application/json",
-          Authorization: `Bearer ${user.data.token}`,
+          Authorization: `Bearer ${user.token}`,
         },
       };
 
@@ -136,7 +135,9 @@ const SideDrawer = () => {
 
   return (
     <>
-      <Header style={{ background: "rgba(255, 255, 255, 0.4)" }}>
+      <Header
+        style={{ background: "rgba(255, 255, 255, 0.4)", padding: "0 5%" }}
+      >
         <Row justify="space-between" align="middle">
           <Col>
             <Tooltip placement="bottom" title="Search for user" color="black">
@@ -159,7 +160,7 @@ const SideDrawer = () => {
                 <Avatar
                   size="large"
                   style={{ cursor: "pointer" }}
-                  src={user.data.profilePic}
+                  src={user.profilePic}
                 />
               </Dropdown>
             </div>

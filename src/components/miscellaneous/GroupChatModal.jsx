@@ -1,6 +1,5 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
 import {
   RotateLeftOutlined,
   RotateRightOutlined,
@@ -16,7 +15,6 @@ import { useChatState } from "../context/ChatProvider";
 import { FormControl, Input } from "@mui/material";
 import axios from "axios";
 import { Button } from "antd";
-import { Loader } from "@react-three/drei";
 import { Triangle } from "react-loader-spinner";
 import UserListItem from "../UserAvatar/UserListItem";
 import UserBadgeItem from "../UserAvatar/UserBadgeItem";
@@ -30,7 +28,7 @@ const style = {
   left: "50%",
   transform: "translate(-50%, -50%)",
   width: 400,
-  bgcolor: "rgb(255,255,255,0.7)",
+  bgcolor: "rgb(255,255,255,0.8)",
   boxShadow: 24,
   borderRadius: 2,
   p: 0,
@@ -59,7 +57,7 @@ const GroupChatModal = ({ children }) => {
       setLoading(true);
       const config = {
         headers: {
-          Authorization: `Bearer ${user.data.token}`,
+          Authorization: `Bearer ${user.token}`,
         },
       };
       const { data } = await axios.get(
@@ -127,7 +125,7 @@ const GroupChatModal = ({ children }) => {
     try {
       const config = {
         headers: {
-          Authorization: `Bearer ${user.data.token}`,
+          Authorization: `Bearer ${user.token}`,
         },
       };
       const { data } = await axios.post(

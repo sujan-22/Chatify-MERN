@@ -1,18 +1,23 @@
-import React from "react";
-import { Layout, Menu, theme } from "antd";
+import React, { useState } from "react";
+import { Layout } from "antd";
 import Chats from "../components/Chats";
 import ChatBox from "../components/ChatBox";
 import { useChatState } from "../components/context/ChatProvider";
 import SideDrawer from "../components/miscellaneous/SideDrawer";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { useTheme } from "@mui/material";
 
 const { Header, Content, Sider } = Layout;
 
 const ChatPage = () => {
+  const [fetchAgain, setFetchAgain] = useState(false);
   const { user } = useChatState();
-  const {
-    token: { borderRadiusLG },
-  } = theme.useToken();
+  const theme = useTheme();
+  const borderRadiusLG = theme.spacing(3);
   const colorBgContainer = "rgba(255,255,255,0.4)";
+
+  const isLargeScreen = useMediaQuery(theme.breakpoints.up("sm"));
+
   return (
     <Layout style={{ background: "transparent" }}>
       {user && <SideDrawer />}
@@ -26,19 +31,23 @@ const ChatPage = () => {
             borderRadius: borderRadiusLG,
           }}
         >
-          {user && <Chats />}
+          {user && <Chats fetchAgain={fetchAgain} />}
         </div>
-        <div
-          style={{
-            flex: "60%",
-            padding: 24,
-            background: colorBgContainer,
-            borderRadius: borderRadiusLG,
-            marginLeft: 16,
-          }}
-        >
-          {user && <ChatBox />}
-        </div>
+        {isLargeScreen && (
+          <div
+            style={{
+              flex: "60%",
+              padding: 24,
+              background: colorBgContainer,
+              borderRadius: borderRadiusLG,
+              marginLeft: 16,
+            }}
+          >
+            {user && (
+              <ChatBox fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
+            )}
+          </div>
+        )}
       </Content>
     </Layout>
   );

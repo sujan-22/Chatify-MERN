@@ -8,7 +8,7 @@ import { getSender } from "../config/ChatLogic";
 import { PlusOutlined } from "@ant-design/icons";
 import GroupChatModal from "./miscellaneous/GroupChatModal";
 
-const Chats = () => {
+const Chats = ({ fetchAgain }) => {
   const [loggedUser, setLoggedUser] = useState(null);
   const { selectedChat, setSelectedChat, user, chats, setChats } =
     useChatState();
@@ -17,7 +17,7 @@ const Chats = () => {
     try {
       const config = {
         headers: {
-          Authorization: `Bearer ${user.data.token}`,
+          Authorization: `Bearer ${user.token}`,
         },
       };
 
@@ -25,7 +25,6 @@ const Chats = () => {
         "http://localhost:5000/api/chat",
         config
       );
-      console.log(data);
       setChats(data);
     } catch (error) {
       toast.error("Error occured", {
@@ -42,7 +41,7 @@ const Chats = () => {
   useEffect(() => {
     setLoggedUser(JSON.parse(localStorage.getItem("user")));
     fetchChats();
-  }, []);
+  }, [fetchAgain]);
 
   return (
     <Space direction="vertical" style={{ width: "100%" }}>
@@ -51,13 +50,13 @@ const Chats = () => {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          padding: "0 16px",
+          padding: "0",
           fontSize: "18px",
           fontFamily: "Work sans",
           width: "100%",
         }}
       >
-        <span>Inbox</span>
+        <div style={{ display: "flex", alignItems: "center " }}>Inbox</div>
         <GroupChatModal>
           <Button ghost style={{ fontSize: "15px" }} icon={<PlusOutlined />}>
             New Group Chat

@@ -40,12 +40,12 @@ export default function ProfileModal({ user, visible, onClose }) {
       >
         <Box sx={style}>
           <Typography id="modal-modal-title" variant="h3" component="h2">
-            {user.data.name}
+            {user.name}
           </Typography>
           <Image
             style={{ zIndex: 1400, borderRadius: 10, maxWidth: "90%" }}
             width={200}
-            src={user.data.profilePic}
+            src={user.profilePic}
             preview={{
               toolbarRender: (
                 _,
@@ -74,7 +74,7 @@ export default function ProfileModal({ user, visible, onClose }) {
           />
 
           <Typography id="modal-modal-title" variant="h6" component="h2">
-            Email: {user.data.email}
+            Email: {user.email}
           </Typography>
         </Box>
       </Modal>
