@@ -1,16 +1,13 @@
 import { Box, FormControl, Modal } from "@mui/material";
-import { Button, Input } from "antd";
+import { Button, Input, Space } from "antd";
 import React, { useState } from "react";
 import { useChatState } from "../context/ChatProvider";
 import { Bounce, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import UserBadgeItem from "../UserAvatar/UserBadgeItem";
-import {
-  EditOutlined,
-  CloseCircleOutlined,
-  CheckCircleOutlined,
-} from "@ant-design/icons";
 import axios from "axios";
+import { Triangle } from "react-loader-spinner";
+import UserListItem from "../UserAvatar/UserListItem";
 
 const style = {
   display: "flex",
@@ -32,8 +29,8 @@ const style = {
 const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, children }) => {
   const { setSelectedChat, user, selectedChat } = useChatState();
   const [groupChatName, setGroupChatName] = useState();
-  const [search, setSearch] = useState("");
-  const [searchResult, setSearchResult] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setsearchResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [renameloading, setRenameLoading] = useState(false);
   const [open, setOpen] = React.useState(false);
@@ -41,10 +38,51 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, children }) => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const handleRemove = (delUser) => {};
+  const handleRemove = async (delUser) => {
+    if (selectedChat.groupAdmin._id !== user._id && delUser._id !== user._id) {
+      toast.error("Only group admin can remove someone", {
+        position: "bottom-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        theme: "dark",
+        transition: Bounce,
+      });
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const config = {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      };
+
+      const { data } = await axios.put(
+        `http://localhost:5000/api/chat/groupremove`,
+        {
+          chatId: selectedChat._id,
+          userId: delUser._id,
+        },
+        config
+      );
+      setLoading(false);
+      delUser._id === user._id ? setSelectedChat() : setSelectedChat(data);
+      setFetchAgain(!fetchAgain);
+    } catch (error) {
+      toast.error("Failed to remove user!", {
+        position: "bottom-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        theme: "dark",
+        transition: Bounce,
+      });
+    }
+  };
 
   const handleRename = async () => {
-    console.log("called");
     if (!groupChatName) return;
 
     try {
@@ -62,9 +100,6 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, children }) => {
         },
         config
       );
-
-      console.log(data._id);
-      // setSelectedChat("");
       setSelectedChat(data);
       setFetchAgain(!fetchAgain);
       setRenameLoading(false);
@@ -81,6 +116,92 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, children }) => {
     }
     setGroupChatName("");
     setIsEditingName(false);
+  };
+
+  const handleSearch = async (query) => {
+    setSearchQuery(query);
+    if (!query) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const config = {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      };
+      const { data } = await axios.get(
+        `http://localhost:5000/api/user?search=${searchQuery}`,
+        config
+      );
+      setLoading(false);
+      setsearchResults(data);
+    } catch (error) {
+      toast.error("Failed to load searched user(s)!", {
+        position: "bottom-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        theme: "dark",
+        transition: Bounce,
+      });
+    }
+  };
+
+  const handleAddUser = async (userToAdd) => {
+    if (selectedChat.users.find((u) => u._id === userToAdd._id)) {
+      toast.warning("User already in group", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        theme: "dark",
+        transition: Bounce,
+      });
+      return;
+    }
+    if (selectedChat.groupAdmin._id !== user._id) {
+      toast.error("Only group admin can add someone", {
+        position: "bottom-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        theme: "dark",
+        transition: Bounce,
+      });
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const config = {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      };
+
+      const { data } = await axios.put(
+        `http://localhost:5000/api/chat/groupadd`,
+        {
+          chatId: selectedChat._id,
+          userId: userToAdd._id,
+        },
+        config
+      );
+      setLoading(false);
+      setSelectedChat(data);
+      setFetchAgain(!fetchAgain);
+    } catch (error) {
+      toast.error("Failed to add searched user!", {
+        position: "bottom-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        theme: "dark",
+        transition: Bounce,
+      });
+    }
   };
 
   return (
@@ -103,53 +224,16 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, children }) => {
             }}
           >
             <Box style={{ display: "flex", alignItems: "center" }}>
-              {isEditingName ? (
-                <>
-                  <h1
-                    style={{
-                      marginRight: "10px",
-                      outline: "none",
-                      cursor: "text",
-                      maxWidth: "80%",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                    }}
-                    contentEditable
-                    onBlur={(e) => {
-                      setIsEditingName(false);
-                      setGroupChatName(e.target.textContent);
-                    }}
-                    suppressContentEditableWarning={true}
-                  >
-                    {selectedChat.chatName}
-                  </h1>
-                  <CloseCircleOutlined
-                    style={{ marginLeft: "10px", cursor: "pointer" }}
-                    onClick={(e) => {
-                      e.stopPropagation(); // Prevent event propagation
-                      setIsEditingName(false);
-                      setGroupChatName(selectedChat.chatName);
-                    }}
-                  />
-                  <CheckCircleOutlined
-                    style={{ marginLeft: "10px", cursor: "pointer" }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleRename();
-                    }}
-                  />
-                </>
-              ) : (
-                <>
-                  <h1
-                    style={{ marginRight: "10px", cursor: "pointer" }}
-                    onClick={() => setIsEditingName(true)}
-                  >
-                    {selectedChat.chatName.toUpperCase()}
-                  </h1>
-                  <EditOutlined onClick={() => setIsEditingName(true)} />
-                </>
-              )}
+              <h1
+                style={{
+                  marginRight: "10px",
+                  outline: "none",
+                  cursor: "text",
+                  maxWidth: "80%",
+                }}
+              >
+                {selectedChat.chatName}
+              </h1>
             </Box>
 
             <Box>
@@ -170,35 +254,34 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, children }) => {
               </div>
             </Box>
             <FormControl>
-              <Input
-                placeholder="Group name"
-                style={{ marginBottom: 3 }}
-                // onChange={(e) => setGroupChatName(e.target.value)}
-              />
+              <Space.Compact style={{ width: "100%" }}>
+                <Input
+                  placeholder="Chat Name"
+                  onChange={(e) => setGroupChatName(e.target.value)}
+                />
+                <Button
+                  type="outlined"
+                  onClick={handleRename}
+                  loading={renameloading}
+                >
+                  Update
+                </Button>
+              </Space.Compact>
             </FormControl>
             <FormControl>
               <Input
                 placeholder="Add users eg: John Doe, Jane..."
-                style={{ marginBottom: 1 }}
-                // onChange={(e) => handleSearch(e.target.value)}
+                onChange={(e) => handleSearch(e.target.value)}
               />
             </FormControl>
             <div
               style={{
                 display: "grid",
                 gridTemplateColumns: "1fr 1fr",
-                rowGap: 5,
+                rowGap: 2,
               }}
-            >
-              {/* {selectedUsers.map((u) => (
-                <UserBadgeItem
-                  key={u._id}
-                  user={u}
-                  handleFunction={() => handleRemove(u)}
-                />
-              ))} */}
-            </div>
-            {/* {loading ? (
+            ></div>
+            {loading ? (
               <div style={{ display: "flex", justifyContent: "center" }}>
                 <Triangle
                   visible={true}
@@ -216,12 +299,12 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, children }) => {
                   <UserListItem
                     key={users._id}
                     user={users}
-                    handleFunction={() => handleGroup(users)}
+                    handleFunction={() => handleAddUser(users)}
                   />
                 </div>
               ))
-            )} */}
-            <Button ghost>Create Chat</Button>
+            )}
+            <Button ghost>Leave Group</Button>
           </div>
         </Box>
       </Modal>

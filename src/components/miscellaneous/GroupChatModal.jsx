@@ -67,7 +67,7 @@ const GroupChatModal = ({ children }) => {
       setLoading(false);
       setsearchResults(data);
     } catch (error) {
-      toast.error("Failed to load seached user(s)!", {
+      toast.error("Failed to load searched user(s)!", {
         position: "bottom-center",
         autoClose: 5000,
         hideProgressBar: false,

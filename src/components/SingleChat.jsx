@@ -75,7 +75,10 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             )}
             {selectedChat.isGroupChat ? (
               <>
-                <UpdateGroupChatModal>
+                <UpdateGroupChatModal
+                  fetchAgain={fetchAgain}
+                  setFetchAgain={setFetchAgain}
+                >
                   <IconButton style={{ marginLeft: "auto" }}>
                     <EyeOutlined />
                   </IconButton>
@@ -100,17 +103,17 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
           width="100%"
         >
           <Typography textAlign="center" variant="h5">
-            Click on user to start chatting!
+            Click on chat to start chatting!
           </Typography>
         </Box>
       )}
-      {selectedChat && (
+      {/* {selectedChat && (
         <ProfileModal
           user={senderFullName(user, selectedChat.users)}
           visible={isProfileModalOpen}
           onClose={() => setIsProfileModalOpen(false)}
         />
-      )}
+      )} */}
     </>
   );
 };

@@ -2,7 +2,6 @@ import React from "react";
 import Box from "@mui/material/Box";
 import { useChatState } from "./context/ChatProvider";
 import SingleChat from "./SingleChat";
-// import SingleChat from "./SingleChat";
 
 const Chatbox = ({ fetchAgain, setFetchAgain }) => {
   const { selectedChat, user } = useChatState();
